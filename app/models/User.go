@@ -1,7 +1,9 @@
 package models
 
 import (
+	"gopher-rest/pkg/utils"
 	u "gopher-rest/pkg/utils"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -15,7 +17,8 @@ type User struct {
 	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	// Role        Role
+	Role      string
+	Token     string `gorm:"-"`
 }
 
 func (user *User) Validate() (map[string]interface{}, bool) {
@@ -57,7 +60,22 @@ func (user *User) Create() map[string]interface{} {
 		return u.Message(false, "Struct Validation Error.")
 	}
 
+	if strings.Contains(user.Role, "ROLE_ADMIN") {
+		user.Role = "ROLE_ADMIN"
+	} else {
+		user.Role = "ROLE_USER"
+	}
+
 	GetDB().Create(user)
+
+	token, err := utils.GenerateNewAccessToken()
+
+	if err != nil {
+		u.Message(false, "Error creating account. Please retry")
+	}
+
+	user.Token = token
+	user.Password = ""
 
 	response := u.Message(true, "Account has been created")
 
@@ -65,3 +83,24 @@ func (user *User) Create() map[string]interface{} {
 
 	return response
 }
+
+// func Login(username, password string) map[string]interface{} {
+
+// 	user := &User{}
+
+// 	err := GetDB().Table("users").Where("username = ?", username).First(user).Error
+
+// 	if err != nil {
+// 		if err == gorm.ErrRecordNotFound {
+// 			return u.Message(false, "Email address not found")
+// 		}
+// 		return u.Message(false, "Connection error. Please retry")
+// 	}
+
+// 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+
+// 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
+// 		return u.Message(false, "Invalid login credentials. Please try again")
+// 	}
+
+// }
