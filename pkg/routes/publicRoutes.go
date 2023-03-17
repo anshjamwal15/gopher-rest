@@ -13,4 +13,6 @@ func PublicRoutes(a *fiber.App) {
 	route.Post("/user", controllers.Register)
 
 	route.Get("/check", controllers.CheckData)
+
+	route.Post("/testuser", controllers.TestData)
 }

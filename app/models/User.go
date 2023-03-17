@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	u "gopher-rest/pkg/utils"
 	"time"
 
@@ -11,46 +10,41 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	Username string
-	Password string
+	id        int
+	Username  string
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 	// Role        Role
 }
 
-// func (user *User) Validate() (map[string]interface{}, bool) {
+func (user *User) Validate() (map[string]interface{}, bool) {
 
-// 	if len(user.Username) > 0 {
-// 		return u.Message(false, "Please enter Username"), false
-// 	}
+	temp := &User{}
 
-// 	if len(user.Password) < 6 {
-// 		return u.Message(false, "Please enter valid Password"), false
-// 	}
+	err := GetDB().Table("users").Where("Username = ?", user.Username).First(temp).Error
 
-// 	temp := &User{}
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return u.Message(false, "Connection error. Please retry"), false
+	}
 
-// 	err := GetDB().Table("user").Where("Username = ?", user.Username).First(temp).Error
+	if temp.Username != "" {
+		return u.Message(false, "Username already in use by another user."), false
+	}
 
-// 	if err != nil && err != gorm.ErrRecordNotFound {
-// 		return u.Message(false, "Connection error. Please retry"), false
-// 	}
+	return u.Message(false, "Requirement passed"), true
 
-// 	if temp.Username != "" {
-// 		return u.Message(false, "Username already in use by another user."), false
-// 	}
-
-// 	return u.Message(false, "Requirement passed"), true
-
-// }
+}
 
 func (user *User) Create() map[string]interface{} {
 
-	fmt.Println(user)
-	fmt.Println(user.Username)
+	if len(user.Username) < 0 {
+		return u.Message(false, "Please enter Username")
+	}
 
-	// if res, ok := user.Validate(); !ok {
-	// 	return res
-	// }
+	if len(user.Password) < 6 {
+		return u.Message(false, "Please enter valid Password")
+	}
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)

@@ -12,4 +12,3 @@ remove:
 	@rm -rf build/
 rebuild: remove run
 	@$(BUILD_DIR)/$(APP_NAME)
-	
