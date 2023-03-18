@@ -114,20 +114,16 @@ func Login(username, password string) map[string]interface{} {
 
 }
 
-func FindById(id int) map[string]interface{} {
+func FindById(id int) *User {
 
 	temp := User{Id: id}
 
 	err := GetDB().First(&temp, "id = ?", id).Error
 
-	resp := map[string]interface{}{}
-
 	if err != nil {
-		resp = u.Message(false, "Error to find user.")
-		return resp
+		return &temp
 	}
 	temp.Password = ""
 
-	resp["user"] = temp
-	return resp
+	return &temp
 }
