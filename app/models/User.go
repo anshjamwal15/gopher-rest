@@ -12,7 +12,7 @@ import (
 )
 
 type User struct {
-	id        int
+	Id        int
 	Username  string
 	Password  string
 	CreatedAt time.Time
@@ -112,4 +112,22 @@ func Login(username, password string) map[string]interface{} {
 	resp["user"] = user
 	return resp
 
+}
+
+func FindById(id int) map[string]interface{} {
+
+	temp := User{Id: id}
+
+	err := GetDB().First(&temp, "id = ?", id).Error
+
+	resp := map[string]interface{}{}
+
+	if err != nil {
+		resp = u.Message(false, "Error to find user.")
+		return resp
+	}
+	temp.Password = ""
+
+	resp["user"] = temp
+	return resp
 }
