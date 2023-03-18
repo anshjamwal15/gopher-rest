@@ -12,4 +12,6 @@ func PublicRoutes(a *fiber.App) {
 
 	route.Post("/user", controllers.Register)
 
+	route.Post("/login", controllers.Login)
+
 }

@@ -84,23 +84,32 @@ func (user *User) Create() map[string]interface{} {
 	return response
 }
 
-// func Login(username, password string) map[string]interface{} {
+func Login(username, password string) map[string]interface{} {
 
-// 	user := &User{}
+	user := &User{}
 
-// 	err := GetDB().Table("users").Where("username = ?", username).First(user).Error
+	err := GetDB().Table("users").Where("username = ?", username).First(user).Error
 
-// 	if err != nil {
-// 		if err == gorm.ErrRecordNotFound {
-// 			return u.Message(false, "Email address not found")
-// 		}
-// 		return u.Message(false, "Connection error. Please retry")
-// 	}
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return u.Message(false, "Email address not found")
+		}
+		return u.Message(false, "Connection error. Please retry")
+	}
 
-// 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 
-// 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-// 		return u.Message(false, "Invalid login credentials. Please try again")
-// 	}
+	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
+		return u.Message(false, "Invalid login credentials. Please try again")
+	}
 
-// }
+	user.Password = ""
+
+	token, err := utils.GenerateNewAccessToken()
+	user.Token = token
+
+	resp := u.Message(true, "Logged In")
+	resp["user"] = user
+	return resp
+
+}
