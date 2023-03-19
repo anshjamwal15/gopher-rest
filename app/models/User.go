@@ -42,12 +42,8 @@ func (user *User) Validate() (map[string]interface{}, bool) {
 
 func (user *User) Create() map[string]interface{} {
 
-	if len(user.Username) < 0 {
-		return u.Message(false, "Please enter Username")
-	}
-
-	if len(user.Password) < 6 {
-		return u.Message(false, "Please enter valid Password")
+	if check, msg := utils.CreateUserValidator(user.Username, user.Password); check != true {
+		return u.Message(false, msg)
 	}
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -115,7 +111,7 @@ func Login(username, password string) map[string]interface{} {
 
 }
 
-func FindById(id int) *User {
+func FindUserById(id int) *User {
 
 	temp := User{Id: id}
 

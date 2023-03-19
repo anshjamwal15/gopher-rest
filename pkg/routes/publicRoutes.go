@@ -15,4 +15,6 @@ func PublicRoutes(a *fiber.App) {
 	route.Post("/login", controllers.Login)
 
 	route.Post("/create", controllers.CreateOrganization)
+
+	route.Post("/add", controllers.AddUser)
 }

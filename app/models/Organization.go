@@ -16,6 +16,12 @@ type Organization struct {
 	Users      []User `gorm:"many2many:org_users;"`
 }
 
+type OrganizationUser struct {
+	OrgId     int `gorm:"primaryKey"`
+	UserId    int `gorm:"primaryKey"`
+	CreatedAt time.Time
+}
+
 func (org *Organization) Create() map[string]interface{} {
 
 	validate := validator.New()
@@ -33,6 +39,20 @@ func (org *Organization) Create() map[string]interface{} {
 	return response
 }
 
-// func (org *Organization) AddUser() map[string]interface{} {
+func FindByOrgById(id int) *Organization {
 
-// }
+	temp := Organization{Id: id}
+
+	err := GetDB().First(&temp, "id = ?", id).Error
+
+	if err != nil {
+		return &temp
+	}
+
+	return &temp
+
+}
+
+func AddUserInOrg(org Organization, user User) {
+	GetDB().Model(&org).Association("Users").Append(&user)
+}

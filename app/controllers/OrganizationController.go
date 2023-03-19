@@ -3,6 +3,8 @@ package controllers
 import (
 	"gopher-rest/app/models"
 	"gopher-rest/pkg/payload/request"
+	"gopher-rest/pkg/payload/response"
+	"gopher-rest/pkg/utils"
 	"strings"
 	"time"
 
@@ -21,7 +23,7 @@ func CreateOrganization(c *fiber.Ctx) error {
 		})
 	}
 
-	fetchedUser := models.FindById(org.Created_By)
+	fetchedUser := models.FindUserById(org.Created_By)
 
 	validate := validator.New()
 
@@ -47,7 +49,71 @@ func CreateOrganization(c *fiber.Ctx) error {
 		Users:      []models.User{*fetchedUser},
 	}
 
-	resp := newOrg.Create()
+	newOrg.Create()
+
+	resp := &response.CreateOrgResponse{
+		Name:      newOrg.Name,
+		CreatedBy: newOrg.Id,
+		CreatedAt: newOrg.Created_At,
+		UpdatedAt: newOrg.Updated_At,
+	}
 
 	return c.JSON(resp)
+}
+
+func AddUser(c *fiber.Ctx) error {
+
+	req := &request.CreateUserRequest{}
+
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	if check, msg := utils.CreateUserValidator(req.Username, req.Password); check != true {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   msg,
+		})
+	}
+
+	fetchedUser := models.FindUserById(req.AdminId)
+
+	validate := validator.New()
+
+	if err := validate.StructPartial(req, "AdminId"); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	if strings.Compare(fetchedUser.Role, "ROLE_ADMIN") != 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "You're not authorized user to create user.",
+		})
+	}
+	newUser := &models.User{Username: req.Username, Password: req.Password}
+
+	newUser.Create()
+
+	org := models.FindByOrgById(req.OrgId)
+
+	models.AddUserInOrg(*org, *newUser)
+
+	userResp := &response.UserResponse{
+		Id:       newUser.Id,
+		Username: newUser.Username,
+		Role:     newUser.Role,
+	}
+
+	orgResp := &response.CreateUserResponse{
+		OrgName:      org.Name,
+		UserResponse: *userResp,
+	}
+
+	return c.JSON(orgResp)
 }
