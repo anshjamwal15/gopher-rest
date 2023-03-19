@@ -12,13 +12,14 @@ import (
 )
 
 type User struct {
-	Id        int
-	Username  string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Role      string
-	Token     string `gorm:"-"`
+	Id         int `gorm:"primaryKey"`
+	Username   string
+	Password   string
+	Created_At time.Time
+	Updated_At time.Time
+	Role       string
+	Token      string `gorm:"-"`
+	// `gorm:"ForeignKey:Id;references:Id;belongsTo"`
 }
 
 func (user *User) Validate() (map[string]interface{}, bool) {
@@ -51,8 +52,8 @@ func (user *User) Create() map[string]interface{} {
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)
-	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
+	user.Created_At = time.Now()
+	user.Updated_At = time.Now()
 
 	validate := validator.New()
 

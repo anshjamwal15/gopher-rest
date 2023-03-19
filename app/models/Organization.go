@@ -8,11 +8,12 @@ import (
 )
 
 type Organization struct {
-	Id         int
+	Id         int `gorm:"primaryKey"`
 	Name       string
-	Created_by *User
-	Created_at time.Time
-	Updated_at time.Time
+	Created_By int
+	Created_At time.Time
+	Updated_At time.Time
+	Users      []User `gorm:"many2many:org_users;"`
 }
 
 func (org *Organization) Create() map[string]interface{} {
@@ -25,9 +26,13 @@ func (org *Organization) Create() map[string]interface{} {
 
 	GetDB().Create(org)
 
-	response := u.Message(false, "Failed to created organization. Please retry.")
+	response := u.Message(true, "Organization created successfully.")
 
 	response["organization"] = org
 
 	return response
 }
+
+// func (org *Organization) AddUser() map[string]interface{} {
+
+// }

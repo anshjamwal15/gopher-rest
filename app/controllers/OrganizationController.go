@@ -41,9 +41,10 @@ func CreateOrganization(c *fiber.Ctx) error {
 
 	newOrg := &models.Organization{
 		Name:       org.Name,
-		Created_by: fetchedUser,
-		Created_at: time.Now(),
-		Updated_at: time.Now(),
+		Created_By: fetchedUser.Id,
+		Created_At: time.Now(),
+		Updated_At: time.Now(),
+		Users:      []models.User{*fetchedUser},
 	}
 
 	resp := newOrg.Create()
