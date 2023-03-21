@@ -5,6 +5,7 @@ import (
 	"gopher-rest/pkg/payload/request"
 	"gopher-rest/pkg/payload/response"
 	"gopher-rest/pkg/utils"
+	"strconv"
 	"strings"
 	"time"
 
@@ -116,4 +117,29 @@ func AddUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(orgResp)
+}
+
+func DeleteUser(c *fiber.Ctx) error {
+
+	id, err := strconv.Atoi(c.Params("userid"))
+
+	orgId, err := strconv.Atoi(c.Params("orgid"))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Please try again.",
+		})
+	}
+
+	fetchedUser := models.FindUserById(id)
+
+	org := models.FindByOrgById(orgId)
+
+	models.DeleteUser(*org, *fetchedUser)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error": false,
+		"msg":   "User deleted successfully.",
+	})
 }

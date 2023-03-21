@@ -56,3 +56,7 @@ func FindByOrgById(id int) *Organization {
 func AddUserInOrg(org Organization, user User) {
 	GetDB().Model(&org).Association("Users").Append(&user)
 }
+
+func DeleteUser(org Organization, user User) {
+	GetDB().Model(&org).Association("Users").Delete(&user)
+}
