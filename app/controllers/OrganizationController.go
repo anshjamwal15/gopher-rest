@@ -80,7 +80,7 @@ func AddUser(c *fiber.Ctx) error {
 		})
 	}
 
-	fetchedUser := models.FindUserById(req.AdminId)
+	fetchedAdmin := models.FindUserById(req.AdminId)
 
 	validate := validator.New()
 
@@ -91,17 +91,39 @@ func AddUser(c *fiber.Ctx) error {
 		})
 	}
 
-	if strings.Compare(fetchedUser.Role, "ROLE_ADMIN") != 0 {
+	if strings.Compare(fetchedAdmin.Role, "ROLE_ADMIN") != 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   "You're not authorized user to create user.",
 		})
 	}
+
+	fetchedUser := models.CheckExistingUser(req.Username)
+
+	org := models.FindByOrgById(req.OrgId)
+
+	if fetchedUser.Role == "ROLE_USER" {
+		models.AddUserInOrg(*org, fetchedUser)
+		userResp := &response.UserResponse{
+			Id:       fetchedUser.Id,
+			Username: fetchedUser.Username,
+			Role:     fetchedUser.Role,
+		}
+
+		orgResp := &response.CreateUserResponse{
+			OrgName:      org.Name,
+			UserResponse: *userResp,
+		}
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"error": true,
+			"msg":   "User added in organization.",
+			"user":  orgResp,
+		})
+	}
+
 	newUser := &models.User{Username: req.Username, Password: req.Password}
 
 	newUser.Create()
-
-	org := models.FindByOrgById(req.OrgId)
 
 	models.AddUserInOrg(*org, *newUser)
 
