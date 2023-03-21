@@ -60,3 +60,15 @@ func AddUserInOrg(org Organization, user User) {
 func DeleteUser(org Organization, user User) {
 	GetDB().Model(&org).Association("Users").Delete(&user)
 }
+
+func GetAllUsersInOrg(id int) []User {
+
+	temp := Organization{Id: id}
+
+	err := GetDB().Model(&temp).Preload("Users").Find(&temp)
+
+	if err != nil {
+		return *&temp.Users
+	}
+	return *&temp.Users
+}

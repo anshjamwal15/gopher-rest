@@ -19,4 +19,8 @@ func PublicRoutes(a *fiber.App) {
 	route.Post("/add", controllers.AddUser)
 
 	route.Delete("/delete/:userid/:orgid", controllers.DeleteUser)
+
+	route.Get("/view/:userid", controllers.ViewUser)
+
+	route.Get("/all/:orgid", controllers.GetUserList)
 }

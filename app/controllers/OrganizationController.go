@@ -165,3 +165,42 @@ func DeleteUser(c *fiber.Ctx) error {
 		"msg":   "User deleted successfully.",
 	})
 }
+
+func ViewUser(c *fiber.Ctx) error {
+
+	id, err := strconv.Atoi(c.Params("userid"))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Please try again.",
+		})
+	}
+
+	fetchedUser := models.FindUserById(id)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error": false,
+		"user":  fetchedUser,
+	})
+}
+
+func GetUserList(c *fiber.Ctx) error {
+
+	id, err := strconv.Atoi(c.Params("orgid"))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": false,
+			"msg":   "Please try again.",
+		})
+	}
+
+	userList := models.GetAllUsersInOrg(id)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error": true,
+		"users": userList,
+	})
+
+}
