@@ -73,7 +73,7 @@ func AddUser(c *fiber.Ctx) error {
 		})
 	}
 
-	if check, msg := utils.CreateUserValidator(req.Username, req.Password); check != true {
+	if check, msg := utils.CreateUserValidator(req.Username, req.Password); !check {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   msg,
@@ -103,7 +103,9 @@ func AddUser(c *fiber.Ctx) error {
 	org := models.FindByOrgById(req.OrgId)
 
 	if fetchedUser.Role == "ROLE_USER" {
+
 		models.AddUserInOrg(*org, fetchedUser)
+
 		userResp := &response.UserResponse{
 			Id:       fetchedUser.Id,
 			Username: fetchedUser.Username,
@@ -114,6 +116,7 @@ func AddUser(c *fiber.Ctx) error {
 			OrgName:      org.Name,
 			UserResponse: *userResp,
 		}
+
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"error": true,
 			"msg":   "User added in organization.",
@@ -143,11 +146,11 @@ func AddUser(c *fiber.Ctx) error {
 
 func DeleteUser(c *fiber.Ctx) error {
 
-	id, err := strconv.Atoi(c.Params("userid"))
+	id, er := strconv.Atoi(c.Params("userid"))
 
 	orgId, err := strconv.Atoi(c.Params("orgid"))
 
-	if err != nil {
+	if err != nil && er != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   "Please try again.",

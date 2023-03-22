@@ -1,10 +1,10 @@
 package main
 
 import (
+	"gopher-rest/cmd/server"
 	"gopher-rest/pkg/configs"
 	"gopher-rest/pkg/middleware"
 	"gopher-rest/pkg/routes"
-	"gopher-rest/pkg/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,5 +19,7 @@ func main() {
 
 	routes.PublicRoutes(app)
 
-	utils.StartServer(app)
+	routes.PrivateRoutes(app)
+
+	server.StartServer(app)
 }
