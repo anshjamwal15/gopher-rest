@@ -19,6 +19,13 @@ func Register(c *fiber.Ctx) error {
 
 	resp := user.Create()
 
+	if resp["status"] == false {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   resp["message"],
+		})
+	}
+
 	return c.JSON(resp)
 }
 
