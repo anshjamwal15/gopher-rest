@@ -1,7 +1,6 @@
 package models
 
 import (
-	"gopher-rest/pkg/utils"
 	u "gopher-rest/pkg/utils"
 	"strings"
 	"time"
@@ -42,7 +41,7 @@ func (user *User) Validate() (map[string]interface{}, bool) {
 
 func (user *User) Create() map[string]interface{} {
 
-	if check, msg := utils.CreateUserValidator(user.Username, user.Password); check != true {
+	if check, msg := u.CreateUserValidator(user.Username, user.Password); !check {
 		return u.Message(false, msg)
 	}
 
@@ -65,10 +64,10 @@ func (user *User) Create() map[string]interface{} {
 
 	GetDB().Create(user)
 
-	token, err := utils.GenerateNewAccessToken()
+	token, err := u.GenerateNewAccessToken()
 
 	if err != nil {
-		u.Message(false, "Error creating account. Please retry")
+		return u.Message(false, "Error creating account. Please retry")
 	}
 
 	user.Token = token
@@ -102,7 +101,10 @@ func Login(username, password string) map[string]interface{} {
 
 	user.Password = ""
 
-	token, err := utils.GenerateNewAccessToken()
+	token, err := u.GenerateNewAccessToken()
+	if err != nil {
+		return u.Message(false, "Error creating account. Please retry")
+	}
 	user.Token = token
 
 	resp := u.Message(true, "Logged In")
@@ -132,7 +134,7 @@ func CheckExistingUser(username string) User {
 	err := GetDB().Where("username = ?", username).First(&temp)
 
 	if err != nil {
-		return *&temp
+		return temp
 	}
-	return *&temp
+	return temp
 }
