@@ -108,14 +108,14 @@ func FindUserById(id int) *User {
 	return &temp
 }
 
-func CheckExistingUser(username string) User {
+func CheckExistingUser(username string) *User {
 
 	temp := User{Username: username}
 
 	err := GetDB().Where("username = ?", username).First(&temp)
 
 	if err != nil {
-		return temp
+		return &temp
 	}
-	return temp
+	return &temp
 }

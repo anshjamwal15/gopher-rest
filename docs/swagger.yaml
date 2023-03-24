@@ -1,4 +1,21 @@
 definitions:
+  models.Organization:
+    properties:
+      created_At:
+        type: string
+      created_By:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      updated_At:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+    type: object
   models.User:
     properties:
       created_At:
@@ -16,6 +33,17 @@ definitions:
       username:
         type: string
     type: object
+  response.CreateOrgResponse:
+    properties:
+      createdAt:
+        type: string
+      createdBy:
+        type: integer
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
 info:
   contact:
     email: anshjaamwal2002@mail.com
@@ -25,21 +53,102 @@ info:
   title: API
   version: "1.0"
 paths:
-  /v1/login:
+  /api/v1/add:
+    post:
+      consumes:
+      - application/json
+      description: Add User to org.
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Organization'
+      security:
+      - ApiKeyAuth: []
+      summary: Add User
+      tags:
+      - Org
+  /api/v1/all/{orgid}:
+    get:
+      description: View User list in org.
+      parameters:
+      - description: Org ID
+        in: path
+        name: orgid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: View User
+      tags:
+      - Org
+  /api/v1/create:
+    post:
+      consumes:
+      - application/json
+      description: Create new org.
+      parameters:
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CreateOrgResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create new org
+      tags:
+      - Org
+  /api/v1/delete/{userid}/{orgid}:
+    delete:
+      description: Delete User .
+      parameters:
+      - description: Org ID
+        in: path
+        name: orgid
+        required: true
+        type: integer
+      - description: User ID
+        in: path
+        name: userid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete User
+      tags:
+      - Org
+  /api/v1/login:
     post:
       consumes:
       - application/json
       description: Log In.
       parameters:
-      - description: Username
+      - description: Data
         in: body
-        name: username
-        required: true
-        schema:
-          type: string
-      - description: Password
-        in: body
-        name: password
+        name: data
         required: true
         schema:
           type: string
@@ -55,21 +164,15 @@ paths:
       summary: create new JWT token
       tags:
       - User
-  /v1/user:
+  /api/v1/user:
     post:
       consumes:
       - application/json
       description: Register new user.
       parameters:
-      - description: Username
+      - description: Data
         in: body
-        name: username
-        required: true
-        schema:
-          type: string
-      - description: Password
-        in: body
-        name: password
+        name: data
         required: true
         schema:
           type: string
@@ -85,6 +188,23 @@ paths:
       summary: create a new user
       tags:
       - User
+  /api/v1/view/{userid}:
+    get:
+      description: View User
+      parameters:
+      - description: User ID
+        in: path
+        name: userid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: View User
+      tags:
+      - Org
 securityDefinitions:
   ApiKeyAuth:
     in: header

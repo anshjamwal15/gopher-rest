@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gopher-rest/app/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,14 +13,16 @@ import (
 // @Tags User
 // @Accept json
 // @Produce json
-// @Param username body string true "Username"
-// @Param password body string true "Password"
+// @Param data body string true "Data"
 // @Success 200 {object} models.User
 // @Security ApiKeyAuth
-// @Router /v1/user [post]
+// @Router /api/v1/user [post]
 func Register(c *fiber.Ctx) error {
 
 	user := &models.User{}
+
+	fmt.Println(user.Username)
+	fmt.Println(user.Password)
 
 	if err := c.BodyParser(user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -55,11 +58,10 @@ func Register(c *fiber.Ctx) error {
 // @Tags User
 // @Accept json
 // @Produce json
-// @Param username body string true "Username"
-// @Param password body string true "Password"
+// @Param data body string true "Data"
 // @Success 200 {object} models.User
 // @Security ApiKeyAuth
-// @Router /v1/login [post]
+// @Router /api/v1/login [post]
 func Login(c *fiber.Ctx) error {
 
 	user := &models.User{}

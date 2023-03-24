@@ -20,7 +20,144 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/login": {
+        "/api/v1/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add User to org.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Org"
+                ],
+                "summary": "Add User",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Organization"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/all/{orgid}": {
+            "get": {
+                "description": "View User list in org.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Org"
+                ],
+                "summary": "View User",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Org ID",
+                        "name": "orgid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create new org.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Org"
+                ],
+                "summary": "Create new org",
+                "parameters": [
+                    {
+                        "description": "Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateOrgResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/delete/{userid}/{orgid}": {
+            "delete": {
+                "description": "Delete User .",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Org"
+                ],
+                "summary": "Delete User",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Org ID",
+                        "name": "orgid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/login": {
             "post": {
                 "security": [
                     {
@@ -40,17 +177,8 @@ const docTemplate = `{
                 "summary": "create new JWT token",
                 "parameters": [
                     {
-                        "description": "Username",
-                        "name": "username",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Password",
-                        "name": "password",
+                        "description": "Data",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -68,7 +196,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user": {
+        "/api/v1/user": {
             "post": {
                 "security": [
                     {
@@ -88,17 +216,8 @@ const docTemplate = `{
                 "summary": "create a new user",
                 "parameters": [
                     {
-                        "description": "Username",
-                        "name": "username",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Password",
-                        "name": "password",
+                        "description": "Data",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -115,9 +234,61 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/view/{userid}": {
+            "get": {
+                "description": "View User",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Org"
+                ],
+                "summary": "View User",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.Organization": {
+            "type": "object",
+            "properties": {
+                "created_At": {
+                    "type": "string"
+                },
+                "created_By": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_At": {
+                    "type": "string"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.User"
+                    }
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -140,6 +311,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.CreateOrgResponse": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
