@@ -43,6 +43,24 @@ func TestPublicRoutes(t *testing.T) {
 			expectedCode:  400,
 			testType:      "Failure",
 		},
+		{
+			description:   "User Login",
+			route:         "/api/v1/login",
+			method:        "POST",
+			body:          strings.NewReader(expectedData),
+			expectedError: false,
+			expectedCode:  200,
+			testType:      "Success",
+		},
+		{
+			description:   "User Login with invalid credentials.",
+			route:         "/api/v1/login",
+			method:        "POST",
+			body:          strings.NewReader(unexpectedData),
+			expectedError: false,
+			expectedCode:  400,
+			testType:      "Failure",
+		},
 	}
 
 	app := fiber.New()

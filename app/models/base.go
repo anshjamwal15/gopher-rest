@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var db *gorm.DB
@@ -41,7 +42,9 @@ func init() {
 
 	dbUri := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, username, dbName, password)
 
-	conn, err := gorm.Open(postgres.Open(dbUri), &gorm.Config{})
+	gormConfig := &gorm.Config{}
+	gormConfig.Logger = logger.Default.LogMode(logger.Silent)
+	conn, err := gorm.Open(postgres.Open(dbUri), gormConfig)
 	if err != nil {
 		fmt.Print(err)
 	}

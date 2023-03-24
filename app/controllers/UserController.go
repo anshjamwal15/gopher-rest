@@ -17,6 +17,15 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 
+	fetchedUser := models.CheckExistingUser(user.Username)
+
+	if fetchedUser.Role != "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "User already exists.",
+		})
+	}
+
 	resp := user.Create()
 
 	if resp["status"] == false {
@@ -41,6 +50,13 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	resp := models.Login(user.Username, user.Password)
+
+	if resp["status"] == false {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   resp["message"],
+		})
+	}
 
 	return c.JSON(resp)
 }

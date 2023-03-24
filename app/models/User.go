@@ -18,25 +18,6 @@ type User struct {
 	Updated_At time.Time
 	Role       string
 	Token      string `gorm:"-"`
-	// `gorm:"ForeignKey:Id;references:Id;belongsTo"`
-}
-
-func (user *User) Validate() (map[string]interface{}, bool) {
-
-	temp := &User{}
-
-	err := GetDB().Table("users").Where("Username = ?", user.Username).First(temp).Error
-
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return u.Message(false, "Connection error. Please retry"), false
-	}
-
-	if temp.Username != "" {
-		return u.Message(false, "Username already in use by another user."), false
-	}
-
-	return u.Message(false, "Requirement passed"), true
-
 }
 
 func (user *User) Create() map[string]interface{} {
