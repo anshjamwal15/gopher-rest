@@ -6,6 +6,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// CreateUser func for create new user.
+// @Description Register new user.
+// @Summary create a new user
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param username body string true "Username"
+// @Param password body string true "Password"
+// @Success 200 {object} models.User
+// @Security ApiKeyAuth
+// @Router /v1/user [post]
 func Register(c *fiber.Ctx) error {
 
 	user := &models.User{}
@@ -38,6 +49,17 @@ func Register(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+// Login func for Login new user.
+// @Description Log In.
+// @Summary create new JWT token
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param username body string true "Username"
+// @Param password body string true "Password"
+// @Success 200 {object} models.User
+// @Security ApiKeyAuth
+// @Router /v1/login [post]
 func Login(c *fiber.Ctx) error {
 
 	user := &models.User{}

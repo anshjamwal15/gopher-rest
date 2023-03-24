@@ -1,0 +1,93 @@
+definitions:
+  models.User:
+    properties:
+      created_At:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      role:
+        type: string
+      token:
+        type: string
+      updated_At:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact:
+    email: anshjaamwal2002@mail.com
+    name: Ansh Jamwal
+  description: This is an auto-generated API Docs.
+  termsOfService: http://swagger.io/terms/
+  title: API
+  version: "1.0"
+paths:
+  /v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Log In.
+      parameters:
+      - description: Username
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: Password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - ApiKeyAuth: []
+      summary: create new JWT token
+      tags:
+      - User
+  /v1/user:
+    post:
+      consumes:
+      - application/json
+      description: Register new user.
+      parameters:
+      - description: Username
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: Password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - ApiKeyAuth: []
+      summary: create a new user
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

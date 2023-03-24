@@ -18,5 +18,8 @@ test: security
 build: clean test
 	@CGO_ENABLED=0 go build -ldflags="-w -s" -o ${BUILD_DIR}/${APP_NAME} main.go
 
-run: build all
+run: swag build all
 	$(BUILD_DIR)/$(APP_NAME)
+
+swag:
+	swag init
