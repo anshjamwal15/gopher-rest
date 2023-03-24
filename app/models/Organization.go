@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	u "gopher-rest/pkg/utils"
 	"time"
 
@@ -53,12 +54,20 @@ func FindByOrgById(id int) *Organization {
 
 }
 
-func AddUserInOrg(org Organization, user User) {
-	GetDB().Model(&org).Association("Users").Append(&user)
+func AddUserInOrg(org Organization, user User) error {
+	err := GetDB().Model(&org).Association("Users").Append(&user).Error()
+	if err != "" {
+		return fmt.Errorf(err)
+	}
+	return nil
 }
 
-func DeleteUser(org Organization, user User) {
-	GetDB().Model(&org).Association("Users").Delete(&user)
+func DeleteUser(org Organization, user User) error {
+	err := GetDB().Model(&org).Association("Users").Delete(&user).Error()
+	if err != "" {
+		return fmt.Errorf(err)
+	}
+	return nil
 }
 
 func GetAllUsersInOrg(id int) []User {

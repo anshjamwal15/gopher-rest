@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"gopher-rest/pkg/routes"
 	"gopher-rest/pkg/utils"
 	"net/http/httptest"
@@ -31,8 +30,6 @@ func TestCreateOrg(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := app.Test(req, -1)
-
-	fmt.Printf("Type is %T\n", resp.Body)
 
 	assert.Equalf(t, false, err != nil, "Create Org")
 

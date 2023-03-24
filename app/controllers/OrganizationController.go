@@ -124,14 +124,14 @@ func AddUser(c *fiber.Ctx) error {
 
 	if fetchedUser.Role == "ROLE_USER" {
 
-		models.AddUserInOrg(*org, *fetchedUser)
+		err := models.AddUserInOrg(*org, *fetchedUser)
 
-		// if err != false {
-		// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-		// 		"error": true,
-		// 		"msg":   "Please try again later.",
-		// 	})
-		// }
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   "Please try again later.",
+			})
+		}
 
 		userResp := &response.UserResponse{
 			Id:       fetchedUser.Id,
@@ -155,14 +155,14 @@ func AddUser(c *fiber.Ctx) error {
 
 	newUser.Create()
 
-	models.AddUserInOrg(*org, *newUser)
+	err := models.AddUserInOrg(*org, *newUser)
 
-	// if err != false {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"error": true,
-	// 		"msg":   "Please try again later.",
-	// 	})
-	// }
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Please try again later.",
+		})
+	}
 
 	userResp := &response.UserResponse{
 		Id:       newUser.Id,
@@ -204,14 +204,14 @@ func DeleteUser(c *fiber.Ctx) error {
 
 	org := models.FindByOrgById(orgId)
 
-	models.DeleteUser(*org, *fetchedUser)
+	dbErr := models.DeleteUser(*org, *fetchedUser)
 
-	// if dbErr != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"error": true,
-	// 		"msg":   "Please try again later.",
-	// 	})
-	// }
+	if dbErr != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Please try again later.",
+		})
+	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"error": false,
