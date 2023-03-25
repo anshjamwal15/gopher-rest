@@ -13,7 +13,7 @@ security:
 
 test: security
 	@go test -v -timeout 30s -coverprofile cover.out ./test
-	@@go tool cover -func=cover.out
+	@go tool cover -func=cover.out
 
 build: clean test
 	@CGO_ENABLED=0 go build -ldflags="-w -s" -o ${BUILD_DIR}/${APP_NAME} main.go
