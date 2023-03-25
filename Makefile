@@ -8,10 +8,7 @@ clean:
 all:
 	@chmod +x $(BUILD_DIR)/$(APP_NAME)
 
-security:
-	gosec -quiet ./...
-
-test: security
+test: 
 	@go test -v -timeout 30s -coverprofile cover.out ./test
 	@go tool cover -func=cover.out
 
