@@ -94,13 +94,18 @@ CREATE DATABASE test
 ```bash
 go mod download
 ```
-## 3. Run build with test cases.
+## 3. Install make.
+
+```bash
+sudo apt install make -y
+```
+## 4. Run build with test cases.
 
 ```bash
 make build
 ```
 
-## 4. Run binary.
+## 5. Run binary.
 
 ```bash
 make run
