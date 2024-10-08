@@ -30,7 +30,7 @@ Created this project for HousewareHQ-github-octernship. My design decision was p
   * [apiserver](./gopher-rest/build/apiserver)
 * [cmd/](./gopher-rest/cmd)
   * [server/](./gopher-rest/cmd/server)
-    * [server.go](./gopher-rest/cmd/server/server.go)
+    * [server.go](./cmd/server/server.go)
 * [configs/](./gopher-rest/configs)
   * [dbConfig.go](./gopher-rest/configs/dbConfig.go)
   * [fiberConfig.go](./gopher-rest/configs/fiberConfig.go)
